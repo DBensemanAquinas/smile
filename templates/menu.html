@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}menu{% endblock %}
+
+{% block pageheading %}menu{% endblock %}
+
+{% block main %}
+<div class="categories">
+    <ul>
+        {% for category in categories %}
+        <li>
+            <a href="/menu/{{ category[0] }}">{{ category[1] }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="products">
+    {% for drink in drinks %}
+    <div class="product-box">
+        <h3>{{ drink[0] }}</h3>
+        <p class="product-box-info">{{ drink[1] }}</p>
+        <p><strong>Volume: </strong>{{ drink[2] }}</p>
+        <p><strong>Price: </strong>${{ drink[3] }}</p>
+        <p class="product-box-image"><img src="/static/images/{{ drink[4] }}.jpg" /></p>
+    </div>
+    {% endfor %}
+</div>
+<form class="myform" action="/menu/{{ cat_id }}" method="post">
+    <h3>Add a Product to this Category</h3>
+    <div class="form-group">
+        <div class="form-label">
+            <label for="name">
+                Product Name:
+            </label>
+        </div>
+        <div class="form-element"><input type="text" id="name" name="name" /></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label">
+            <label for="description">
+                Description:
+            </label>
+        </div>
+        <div class="form-element"><input type="text" id="description" name="description" /></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label">
+            <label for="volume">
+                Volume:
+            </label>
+        </div>
+        <div class="form-element"><input type="text" id="volume" name="volume" /></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label">
+            <label for="price">
+                Price:
+            </label>
+        </div>
+        <div class="form-element"><input type="number" step="0.01" min="0.1" max="30" id="price" name="price" /></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label">
+            <label for="filename">
+                File Name:
+            </label>
+        </div>
+        <div class="form-element"><input type="text" id="filename" name="filename" /></div>
+    </div>
+
+    <div class="form-group">
+        <div class="form-label"> </div>
+        <div class="form-element">
+            <input type="submit" value="Add Item" />
+        </div>
+
+    </div>
+</form>
+{% endblock %}
+
+            
+       
