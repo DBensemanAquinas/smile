@@ -26,6 +26,7 @@
     </div>
     {% endfor %}
 </div>
+{% if logged_in %}
 <form class="myform" action="/menu/{{ cat_id }}" method="post">
     <h3>Add a Product to this Category</h3>
     <div class="form-group">
@@ -77,6 +78,7 @@
 
     </div>
 </form>
+{% endif %}
 {% endblock %}
 
             

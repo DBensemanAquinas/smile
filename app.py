@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 app = Flask(__name__)
+app.secret_key = "kz lkahjg lisua hg ;ahsfg ;us jj"
 
 DATABASE = "smile.db"
 
@@ -17,6 +18,15 @@ def create_connection(db_file):
     return None
 
 
+def is_logged_in():
+    if session.get("user_name") is None:
+        print("Not logged in")
+        return False
+    else:
+        print("Logged in")
+        return True
+    
+
 @app.route('/', methods=["GET", "POST"])
 def render_home_page():
     if request.method == "POST":
@@ -30,7 +40,7 @@ def render_home_page():
             conn.close()
         else:
             return redirect("/?error=Name+must+be+between+3+and+20+characters")
-    return render_template('home.html')
+    return render_template('home.html', logged_in=is_logged_in())
 
 
 @app.route('/menu/<cat_id>', methods=["GET", "POST"])
@@ -67,6 +77,41 @@ def render_menu_page(cat_id):
 @app.route('/contact')
 def render_contact_page():
     return render_template('contact.html')
+
+
+@app.route('/login', methods=["GET", "POST"])
+def render_login_page():
+    if request.method == "POST":
+        user_name = request.form['user_name'].strip().lower()
+        password = request.form['password'].strip()
+        
+        # Check to see whether the user is in the database
+        query = "SELECT * FROM user WHERE username = ? AND password = ?"
+        conn = create_connection(DATABASE)
+        cur = conn.cursor()
+        cur.execute(query, (user_name, password))
+        user_data = cur.fetchone()
+        conn.close()
+        
+        # Check to see whether there is a user in the database
+        try:
+            user_id = user_data[0]
+            first_name = user_data[3]
+        except IndexError:
+            return redirect("/login?error=Invalid+email+or+password")
+        
+        session['user_id'] = user_id
+        session['user_name'] = user_name
+        session['first_name'] = first_name
+        return redirect("/")
+        
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    [session.pop(key) for key in list(session.keys())]
+    return redirect('/?message=See+you+next+time')
 
 
 app.run(host='0.0.0.0', debug=True)
