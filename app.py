@@ -1,6 +1,10 @@
+from ast import Import
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+from flask_bcrypt import Bcrypt
+
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 app.secret_key = "kz lkahjg lisua hg ;ahsfg ;us jj"
 
 DATABASE = "smile.db"
@@ -71,25 +75,27 @@ def render_menu_page(cat_id):
     cur.execute(cat_query)
     categories = cur.fetchall()
     conn.close()
-    return render_template('menu.html', drinks=coffees, categories=categories, cat_id=cat_id)
+    return render_template('menu.html', drinks=coffees, categories=categories, cat_id=cat_id, logged_in=is_logged_in())
 
 
 @app.route('/contact')
 def render_contact_page():
-    return render_template('contact.html')
+    return render_template('contact.html', logged_in=is_logged_in())
 
 
 @app.route('/login', methods=["GET", "POST"])
 def render_login_page():
+    if is_logged_in():
+        return redirect("/")
     if request.method == "POST":
         user_name = request.form['user_name'].strip().lower()
         password = request.form['password'].strip()
         
         # Check to see whether the user is in the database
-        query = "SELECT * FROM user WHERE username = ? AND password = ?"
+        query = "SELECT * FROM user WHERE username = ?"
         conn = create_connection(DATABASE)
         cur = conn.cursor()
-        cur.execute(query, (user_name, password))
+        cur.execute(query, (user_name, ))
         user_data = cur.fetchone()
         conn.close()
         
@@ -97,15 +103,48 @@ def render_login_page():
         try:
             user_id = user_data[0]
             first_name = user_data[3]
+            db_password = user_data[2]
         except IndexError:
             return redirect("/login?error=Invalid+email+or+password")
         
+        if not bcrypt.check_password_hash(db_password, password):
+            return redirect("/login?error=Invalid+email+or+password")
+
         session['user_id'] = user_id
         session['user_name'] = user_name
         session['first_name'] = first_name
         return redirect("/")
         
     return render_template('login.html')
+
+
+@app.route('/signup', methods=["GET", "POST"])
+def render_signup_page():
+    if is_logged_in():
+        return redirect("/")
+    if request.method == "POST":
+        user_name = request.form['username'].strip().lower()
+        password = request.form['password']
+        password2 = request.form['password2']
+        first_name = request.form['firstname']
+        last_name = request.form['lastname']
+        
+        if password != password2:
+            return redirect('/signup?error=Passwords+dont+match')
+        
+        # Hash the password
+        hashed_password= bcrypt.generate_password_hash(password)
+
+        # Add the user to the database
+        conn = create_connection(DATABASE)
+        query = "INSERT INTO user VALUES (NULL, ?, ?, ?, ?)"
+        cur = conn.cursor()
+        cur.execute(query, (user_name, hashed_password, first_name, last_name))
+        conn.commit()
+        conn.close()
+        return redirect('/login')
+        
+    return render_template("signup.html")
 
 
 @app.route('/logout')

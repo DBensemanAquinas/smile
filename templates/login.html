@@ -5,6 +5,7 @@
 {% block pageheading %}login{% endblock %}
 
 {% block main %}
+<p>To sign up, click <a href="/signup">here</a></p>
 <form class="myform" action="/login" method="post">
     <div class="form-group">
         <div class="form-label"><label for="user_name">Username:</label></div>
@@ -19,4 +20,5 @@
         <div class="form-element"><input type="submit" value="Login" /></div>
     </div>
 </form>
+
 {% endblock %}          
