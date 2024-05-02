@@ -1,0 +1,12 @@
+﻿{% extends "base.html" %}
+
+{% block title %}delete category{% endblock %}
+
+{% block pageheading %}Delete Category{% endblock %}
+
+{% block main %}
+<p>Are you sure you wish to delete category <strong>{{ cat_name }}</strong> and all the items in it?
+    <a href="/delete_category_confirmed/{{ cat_id }}">Yes</a>
+    / <a href="/menu/{{ cat_id }}">No</a>
+    </p>
+{% endblock %}

@@ -1,0 +1,27 @@
+﻿{% extends "base.html" %}
+
+{% block title %}cart{% endblock %}
+
+{% block pageheading %}cart{% endblock %}
+
+{% block main %}
+<table>
+    <tr>
+        <th>Item</th>
+        <th class="number">Quantity</th>
+        <th class="number">Each</th>
+        <th class="number">Total</th>
+    </tr>
+    {% for drink in drinks %}
+    <tr>
+        <td>{{ drink[2] }}</td>
+        <td class="number">{{ drink[1] }}</td>
+        <td class="number">${{ drink[3] }}</td>
+        <td class="number">${{ drink[4] }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="4" class="number"><strong>Total ${{ total }}</strong></td>
+    </tr>
+</table>
+{% endblock %}

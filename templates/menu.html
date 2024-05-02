@@ -14,15 +14,22 @@
         {% endfor %}
     </ul>
 </div>
-
+<h3>{{ cat_name }}
+    {% if logged_in %}
+    (<a href="/delete_category/{{ cat_id }}/{{cat_name }}">Delete</a>)
+    {% endif %}
+    </h3>
 <div class="products">
     {% for drink in drinks %}
     <div class="product-box">
-        <h3>{{ drink[0] }}</h3>
+        <a href="/item/{{ cat_id }}/{{ drink[5] }}"><h3>{{ drink[0] }}</h3></a>
         <p class="product-box-info">{{ drink[1] }}</p>
         <p><strong>Volume: </strong>{{ drink[2] }}</p>
         <p><strong>Price: </strong>${{ drink[3] }}</p>
         <p class="product-box-image"><img src="/static/images/{{ drink[4] }}.jpg" /></p>
+        {% if ordering %}
+        <div class="product-box-info"><a href="/add_to_cart/{{ drink[5] }}"> Add to Cart </a></div>
+        {% endif %}
     </div>
     {% endfor %}
 </div>
@@ -36,6 +43,7 @@
             </label>
         </div>
         <div class="form-element"><input type="text" id="name" name="name" /></div>
+        <div class="error">{{ error }}</div>
     </div>
     <div class="form-group">
         <div class="form-label">

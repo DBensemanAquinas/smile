@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}menu{% endblock %}
+
+{% block pageheading %}<a href="/menu/{{ cat_id }}">menu</a>{% endblock %}
+
+{% block main %}
+
+
+  
+    <div>
+        <h3>{{ drink[0] }}</h3>
+        <p class="product-box-info">{{ drink[1] }}</p>
+        <p><strong>Volume: </strong>{{ drink[2] }}</p>
+        <p><strong>Price: </strong>${{ drink[3] }}</p>
+        <p><img src="/static/images/{{ drink[4] }}.jpg" /></p>
+    </div>
+    
+
+
+{% endblock %}
+
+            
+       
